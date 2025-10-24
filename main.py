@@ -1,15 +1,26 @@
 import pandas
+from model.explorator import Explorator
+from model.edge import Edge
 
 
 def prepare_data(explorator_df):
+	adjacent_table = {}
+	for _, row in explorator_df.iterrows()
+		upstream_node = row["noeud_amont"]
+		downstream_node = row["noeud_aval"]
+		edge_type = row["type_aretes"]
+		distance = row["distance"]
+		edge_id = row["arete_id"]
 
-	adjacent_table = {row["noeud_amont"] : (row["noeud_aval"], row ["distance"]) for _, row in explorator_df.iterrows()}
+		edge_object = Edge(upstream_node, downstream_node, edge_type, distance, edge_id)
+		adjacent_table[upstream_node] = edge_object
 	
 	starting_nodes = explorator_df[explorator_df["type_aretes"] == "depart"]["noeud_amont"].values
 	
 	ending_nodes = set(explorator_df[explorator_df["type_aretes"] == "arrivee"]["noeud_aval"].values)
 
 	return adjacent_table, starting_nodes, ending_nodes
+
 
 
 def find_explorators_paths(adjacent_table, starting_nodes, ending_nodes):
