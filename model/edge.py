@@ -5,6 +5,8 @@ class Edge:
 		self.edge_type = edge_type
 		self.distance = distance
 		self.edge_id = edge_id
+		self.explorator_id = None
+
 
 
 	def __add__(self, other_edge):# (+)
