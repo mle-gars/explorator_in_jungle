@@ -5,7 +5,7 @@ from model.edge import Edge
 
 def prepare_data(explorator_df):
 	adjacent_table = {}
-	for _, row in explorator_df.iterrows()
+	for _, row in explorator_df.iterrows():
 		upstream_node = row["noeud_amont"]
 		downstream_node = row["noeud_aval"]
 		edge_type = row["type_aretes"]
@@ -25,29 +25,26 @@ def prepare_data(explorator_df):
 
 def find_explorators_paths(adjacent_table, starting_nodes, ending_nodes):
 	# dans chaque itération on construit pour 1 explorateur
-	for starting_node in starting_nodes:
-		current_path = [starting_node] # l'explorateur débute l'aventure
-		current_node = current_path[-1] # on reccupère l'information lié à la position en cours de l'explorateur
-		distance= 0
+	for index, starting_node in enumerate(starting_nodes):
+		starting_edge = adjacent_table[starting_node]
+		current_explorator = Explorator(explorator_id=index, starting_edge=starting_edge)
+		current_node = current_explorator.get_current_node() # on reccupère l'information lié à la position en cours de l'explorateur
+
 
 		# tant que l'explorateur n'a pas atteint un des points finaux de l'exploration
 		while current_node not in ending_nodes: 
 			# la randonnée de la journée en cours : on réccupère le noeud de la fin de journée ainsi que la distance parcourue pdt la journée
-			next_node, current_distance = adjacent_table[current_node]
-
+			next_edge = adjacent_table[current_node]
 
 			# on stocker la noeud où l'explorateur est arrivé en fin de journée
-			current_path.append(next_node)
-
-			# on comptablise la distance parcourue dans la journée
-			distance += current_distance
+			current_explorator.move_to_next_edge(next_edge)
 			
 			# on actualiser l'information lié à la position en cours de l'explorateur
-			current_node = current_path[-1]
+			current_node = current_explorator.get_current_node()
 		
-		print(f"La distance parcourue: {distance:.3f} Kms ")# prooo
+		print(f"La distance parcourue: {current_explorator.get_total_distance():.3f} Kms ")# prooo
 
-		print(current_path)
+		print(current_explorator.path)
 		print("_"*20)			
 
 
@@ -57,5 +54,4 @@ def find_explorators_paths(adjacent_table, starting_nodes, ending_nodes):
 
 explorator_df = pandas.read_csv("./parcours_explorateurs.csv")
 adjacent_table, starting_nodes, ending_nodes = prepare_data(explorator_df)
-# print(ending_nodes)
 find_explorators_paths(adjacent_table, starting_nodes, ending_nodes)
